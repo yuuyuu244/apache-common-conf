@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import org.apache.commons.configuration.AbstractConfiguration;
+import org.apache.commons.configuration.AbstractFileConfiguration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
 
@@ -21,14 +23,24 @@ public class confSample {
 //        try {
             PropertiesConfiguration config;
             try {
-                config = new PropertiesConfiguration("wps.conf");
+//                AbstractFileConfiguration config = new PropertiesConfiguration();
+
+                config = new PropertiesConfiguration();
+                config.setListDelimiter('0');
+                config.load("wps.conf");
+//                config.setListDelimiter('0');
 //                Object pagePath = config.getProperty("PAGE_PATH");
+                
+                List<Object> list= config.getList("PAGE_PATH");
+                list.forEach((item)->{
+                    System.out.println(item.toString());
+                });
                 
                 Iterator<String> keys = config.getKeys();
                 if (keys != null) {
                 keys.forEachRemaining((String key)->{
                   System.out.println(key);
-                  System.out.println(config.getString(key));
+//                  System.out.println(config.getString(key));
                 });
                 }
                 
@@ -36,7 +48,7 @@ public class confSample {
                 System.out.println("COMMON_PAGE_PATH="+commonPagePath);
                 
                 
-                List<Object> list = config.getList("PAGE_PATH");
+//                List<Object> list = config.getList("PAGE_PATH");
                 Map<String, String> map= new LinkedHashMap<>();
 //                Properties pagePathPro = config.getProperties("PAGE_PATH");
 
