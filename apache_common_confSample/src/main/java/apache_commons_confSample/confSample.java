@@ -9,6 +9,13 @@ import java.util.Properties;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
 
+/**
+ * 
+ * 
+ * @author yuki
+ * @see AbstractConfiguration.setListDelimiter(char)
+ * @see http://javadox.com/commons-configuration/commons-configuration/1.8/org/apache/commons/configuration/PropertiesConfiguration.html
+ */
 public class confSample {
     public static void main(String[] args)  {
 //        try {
@@ -39,7 +46,7 @@ public class confSample {
                 
                 
             } catch (ConfigurationException e) {
-                // TODO ©“®¶¬‚³‚ê‚½ catch ƒuƒƒbƒN
+                // TODO ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ê‚½ catch ï¿½uï¿½ï¿½ï¿½bï¿½N
             }
     }
 
