@@ -1,6 +1,7 @@
 package apache_commons_confSample;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -35,7 +36,7 @@ public class confSample {
                 Map<String, String> map= new LinkedHashMap<>();
                 
                 list.forEach((item)->{
-                    String tmp = item.toString();
+                    String tmp = item.toString();                   
                     String[] pageArray = tmp.split(",");
                     if (pageArray.length == 2) {
                         String alias = pageArray[0];
@@ -52,9 +53,9 @@ public class confSample {
                 
                 // 判定条件
                 List<Object> allPatternList = config.getList("PATTERN");
-                Map<String, List<WPSPattern>> map2 = new LinkedHashMap<>();
+                Map<String, List<WPSPattern>> map2 = new HashMap<>();
                 // map(pageパスが格納)が存在する間、繰り返す。
-                map.forEach((alias,page)->{
+                map.forEach((alias,page) -> {
                     // map(判定条件(全て))が存在する間、繰り返す。
                     allPatternList.forEach(item -> {
                         // Object -> 文字列へ
@@ -91,23 +92,23 @@ public class confSample {
                 });
                 
                
-                Iterator<String> keys = config.getKeys();
-                if (keys != null) {
-                keys.forEachRemaining((String key)->{
-                  System.out.println(key);
-//                  System.out.println(config.getString(key));
-                });
-                }
+//                Iterator<String> keys = config.getKeys();
+//                if (keys != null) {
+//                keys.forEachRemaining((String key)->{
+//                  System.out.println(key);
+////                  System.out.println(config.getString(key));
+//                });
+//                }
                 
                 
                 
 //                List<Object> list = config.getList("PAGE_PATH");
 
 //                Properties pagePathPro = config.getProperties("PAGE_PATH");
-
-                list.forEach((item) -> {
-                     System.out.println(item.toString());
-                });
+//
+//                list.forEach((item) -> {
+//                     System.out.println(item.toString());
+//                });
                 
                 
             } catch (ConfigurationException ex) {
@@ -125,7 +126,8 @@ public class confSample {
     private PropertiesConfiguration loadConfig(String configPath) throws ConfigurationException {
         PropertiesConfiguration config = new PropertiesConfiguration();
         // 区切り文字を指定しない設定
-        config.setListDelimiter('0');
+        config.setDelimiterParsingDisabled(true);        
+//        config.setListDelimiter('0');
         // 設定ファイルの読み込みを実施
         config.load(configPath);
         return config;   
