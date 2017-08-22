@@ -1,10 +1,12 @@
 package apache_commons_confSample;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.StringTokenizer;
 
 import org.apache.commons.configuration.AbstractConfiguration;
 import org.apache.commons.configuration.AbstractFileConfiguration;
@@ -20,22 +22,75 @@ import org.apache.commons.configuration.PropertiesConfiguration;
  */
 public class confSample {
     public static void main(String[] args)  {
-//        try {
-            PropertiesConfiguration config;
+        
+        confSample instance = new confSample();
+        instance.putMapTest();
             try {
-//                AbstractFileConfiguration config = new PropertiesConfiguration();
-
-                config = new PropertiesConfiguration();
-                config.setListDelimiter('0');
-                config.load("wps.conf");
-//                config.setListDelimiter('0');
-//                Object pagePath = config.getProperty("PAGE_PATH");
+                PropertiesConfiguration config = instance.loadConfig("wps.conf");
+                // ‹¤’Êƒy[ƒWƒpƒX
+                String commonPagePath = config.getProperty("COMMON_PAGE_PATH").toString();
                 
+                // o—Íƒy[ƒWƒpƒX
                 List<Object> list= config.getList("PAGE_PATH");
+                Map<String, String> map= new LinkedHashMap<>();
+                
                 list.forEach((item)->{
-                    System.out.println(item.toString());
+                    String tmp = item.toString();
+                    String[] pageArray = tmp.split(",");
+                    if (pageArray.length == 2) {
+                        String alias = pageArray[0];
+                        String page = pageArray[1];
+                        // TODO ƒtƒ@ƒCƒ‹‚Ì‘¶İŠm”F
+                        map.put(alias, page);
+                    }
                 });
                 
+                map.forEach((key,value) -> {
+                    System.out.print("map key:" + key);
+                    System.out.println(" value:" + value);
+                });
+                
+                // ”»’èğŒ
+                List<Object> allPatternList = config.getList("PATTERN");
+                Map<String, List<WPSPattern>> map2 = new LinkedHashMap<>();
+                // map(pageƒpƒX‚ªŠi”[)‚ª‘¶İ‚·‚éŠÔAŒJ‚è•Ô‚·B
+                map.forEach((alias,page)->{
+                    // map(”»’èğŒ(‘S‚Ä))‚ª‘¶İ‚·‚éŠÔAŒJ‚è•Ô‚·B
+                    allPatternList.forEach(item -> {
+                        // Object -> •¶š—ñ‚Ö
+                        String tmp = item.toString();
+                        // ƒJƒ“ƒ}‹æØ‚è
+                        String[] patternArray = tmp.split(",");
+                        // ƒJƒ“ƒ}‹æØ‚è‚Å‚R€–Ú‚ ‚Á‚½ê‡
+                        if (patternArray.length == 3) {
+                            String aliass = patternArray[0];
+                            String name = patternArray[1];
+                            String pattern = patternArray[2];
+                            
+                            if(alias.equals(aliass)) {
+                                List<WPSPattern> patterns = null;
+                                // ƒy[ƒW‚ÌƒGƒCƒŠƒAƒX‚Æ“™‚µ‚¢‚©
+                                if (map2.get(alias) == null ){
+                                    patterns = new ArrayList<>();
+                                } else {
+                                    patterns = map2.get(alias);
+                                }
+                                patterns.add(new WPSPattern(name, pattern));
+                                map2.put(alias, patterns);
+                            } 
+                        }
+                    });
+                });
+                
+                map2.forEach((alias,patterns) -> {
+                    System.out.println("--------- map2 alias: " + alias + " ----------");
+                    patterns.forEach(aaa ->{
+                        System.out.print("list name=" + aaa.getName());
+                        System.out.println(" / pattern=" + aaa.getPattern());
+                    });
+                });
+                
+               
                 Iterator<String> keys = config.getKeys();
                 if (keys != null) {
                 keys.forEachRemaining((String key)->{
@@ -44,12 +99,10 @@ public class confSample {
                 });
                 }
                 
-                String commonPagePath = config.getString("COMMON_PAGE_PATH");
-                System.out.println("COMMON_PAGE_PATH="+commonPagePath);
                 
                 
 //                List<Object> list = config.getList("PAGE_PATH");
-                Map<String, String> map= new LinkedHashMap<>();
+
 //                Properties pagePathPro = config.getProperties("PAGE_PATH");
 
                 list.forEach((item) -> {
@@ -57,9 +110,36 @@ public class confSample {
                 });
                 
                 
-            } catch (ConfigurationException e) {
-                // TODO ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ê‚½ catch ï¿½uï¿½ï¿½ï¿½bï¿½N
+            } catch (ConfigurationException ex) {
+                System.err.println("error");
+                // TODO 
             }
+    }
+    /**
+     * İ’èƒtƒ@ƒCƒ‹‚Ì“Ç‚İ‚İ‚ğÀ{‚·‚éƒƒ\ƒbƒh.
+     * 
+     * @param configPath İ’èƒtƒ@ƒCƒ‹‚ÌƒpƒX
+     * @return İ’èƒtƒ@ƒCƒ‹‚Ì€–Ú‚ğ•Û‚µ‚½ƒCƒ“ƒXƒ^ƒ“ƒX
+     * @throws ConfigurationException İ’è‚Ì—áŠO
+     */
+    private PropertiesConfiguration loadConfig(String configPath) throws ConfigurationException {
+        PropertiesConfiguration config = new PropertiesConfiguration();
+        // ‹æØ‚è•¶š‚ğw’è‚µ‚È‚¢İ’è
+        config.setListDelimiter('0');
+        // İ’èƒtƒ@ƒCƒ‹‚Ì“Ç‚İ‚İ‚ğÀ{
+        config.load(configPath);
+        return config;   
+    }
+    
+    private void putMapTest() {
+        LinkedHashMap<String, String> test = new LinkedHashMap<>();
+        test.put("a", "sss");
+        test.put("a", "ddd");
+        
+        test.forEach((String key, String value) -> {
+            System.out.print(key);
+            System.out.println(value);
+        });
     }
 
 }
